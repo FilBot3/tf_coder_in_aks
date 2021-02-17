@@ -1,7 +1,6 @@
 .PHONY: aks-agic-create aks-agic-destroy aks-nginx-create aks-nginx-destroy k9s
 
-all:
-	source config.sh
+include .makerc
 
 k9s:
 	bash scripts/login_to_poc.sh

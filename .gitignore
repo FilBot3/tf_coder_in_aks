@@ -558,3 +558,14 @@ cython_debug/
 
 ## Bash and Make
 config.sh
+.makerc
+
+
+
+
+
+
+
+## Kubernetes
+kube_admin_config.yaml
+
