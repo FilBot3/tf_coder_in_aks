@@ -887,7 +887,7 @@ resource "helm_release" "azure_ingress" {
 
   set {
     name  = "appgw.subscriptionId"
-    value = data.azurerm_subscription.current.id
+    value = data.azurerm_subscription.current.subscription_id
   }
 
   set {

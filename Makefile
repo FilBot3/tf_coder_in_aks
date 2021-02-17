@@ -1,11 +1,14 @@
 .PHONY: aks-agic-create aks-agic-destroy aks-nginx-create aks-nginx-destroy k9s
 
+all:
+	source config.sh
+
 k9s:
 	bash scripts/login_to_poc.sh
 	k9s
 
 aks-nginx-create:
-	az account set --subscription=76623a17-984b-4133-b5a8-f67b80e55508
+	az account set --subscription=$(SUBSCRIPTION)
 	terraform fmt -recursive
 	terraform -chdir=tf-aks-nginx init
 	terraform -chdir=tf-aks-nginx validate
@@ -14,7 +17,7 @@ aks-nginx-create:
 	bash scripts/login_to_poc.sh
 
 aks-nginx-destroy:
-	az account set --subscription=76623a17-984b-4133-b5a8-f67b80e55508
+	az account set --subscription=$(SUBSCRIPTION)
 	terraform fmt -recursive
 	terraform -chdir=tf-aks-nginx init
 	terraform -chdir=tf-aks-nginx validate
@@ -22,7 +25,7 @@ aks-nginx-destroy:
 	terraform -chdir=tf-aks-nginx apply tf_plan.tfplan
 
 aks-agic-create:
-	az account set --subscription=76623a17-984b-4133-b5a8-f67b80e55508
+	az account set --subscription=$(SUBSCRIPTION)
 	terraform fmt -recursive
 	terraform -chdir=tf-aks-agic init
 	terraform -chdir=tf-aks-agic validate
@@ -31,7 +34,7 @@ aks-agic-create:
 	bash scripts/login_to_poc.sh
 
 aks-agic-destroy:
-	az account set --subscription=76623a17-984b-4133-b5a8-f67b80e55508
+	az account set --subscription=$(SUBSCRIPTION)
 	terraform -chdir=tf-aks-agic fmt -recursive
 	terraform -chdir=tf-aks-agic init
 	terraform -chdir=tf-aks-agic validate

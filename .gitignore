@@ -551,3 +551,10 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+
+
+
+
+
+## Bash and Make
+config.sh
