@@ -187,6 +187,45 @@ resource "azurerm_subnet_network_security_group_association" "coder_appgw" {
   network_security_group_id = azurerm_network_security_group.coder.id
 }
 
+resource "azurerm_postgresql_server" "coder" {
+  name                = "coder-pgsql-server-01"
+  location            = azurerm_resource_group.coder.location
+  resource_group_name = azurerm_resource_group.coder.name
+
+  sku_name = "GP_Gen5_4"
+
+  storage_mb                   = 5120
+  backup_retention_days        = 7
+  geo_redundant_backup_enabled = false
+  auto_grow_enabled            = true
+
+  administrator_login          = var.coder_pgsql_admin
+  administrator_login_password = var.coder_pgsql_admin_password
+  version                      = "9.5"
+  ssl_enforcement_enabled      = true
+}
+
+data "azurerm_postgresql_server" "coder" {
+  name                = azurerm_postgresql_server.coder.name
+  resource_group_name = azurerm_resource_group.coder.name
+}
+
+resource "azurerm_postgresql_database" "coder" {
+  name                = "exampledb"
+  resource_group_name = azurerm_resource_group.coder.name
+  server_name         = azurerm_postgresql_server.coder.name
+  charset             = "UTF8"
+  collation           = "English_United States.1252"
+}
+
+resource "azurerm_postgresql_virtual_network_rule" "coder" {
+  name                                 = "coder-postgresql-vnet-rule"
+  resource_group_name                  = azurerm_resource_group.coder.name
+  server_name                          = azurerm_postgresql_server.coder.name
+  subnet_id                            = azurerm_subnet.coder_pods.id
+  ignore_missing_vnet_service_endpoint = true
+}
+
 resource "random_id" "coder_log_analytics_wksp" {
   # Used to make our Log Analytics Workspace unique per deployment. This should
   # not cause a new resource to build each time we run this if we have our
@@ -625,7 +664,8 @@ resource "null_resource" "wait_for_aks_appgw" {
   depends_on = [
     azurerm_application_gateway.coder,
     azurerm_kubernetes_cluster.coder,
-    local_file.kube_config
+    local_file.kube_config,
+    azurerm_postgresql_database.coder
   ]
 }
 data "azurerm_resource_group" "aks-nodes" {

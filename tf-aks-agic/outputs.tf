@@ -33,3 +33,27 @@ output "coder_aks_kubelet_umi_id" {
   description = "The System Managed Identity UMI ID for AKS Kubelet Workers."
   sensitive   = false
 }
+
+output "coder_pgsql_fqdn" {
+  value       = data.azurerm_postgresql_server.coder.fqdn
+  description = ""
+  sensitive   = false
+}
+
+output "coder_pgsql_version" {
+  value       = data.azurerm_postgresql_server.coder.version
+  description = ""
+  sensitive   = false
+}
+
+output "coder_pgsql_admin" {
+  value       = data.azurerm_postgresql_server.coder.administrator_login
+  description = ""
+  sensitive   = false
+}
+
+output "coder_pgsql_sku" {
+  value       = data.azurerm_postgresql_server.coder.sku_name
+  description = ""
+  sensitive   = false
+}
