@@ -70,7 +70,7 @@ provider "helm" {
 resource "helm_release" "coder_com" {
   name       = "coder"
   repository = "https://helm.coder.com"
-  chart      = "coder/coder"
+  chart      = "coder"
   version    = var.coder_com_version
   namespace  = var.coder_com_namespace
 
