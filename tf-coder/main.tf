@@ -79,7 +79,37 @@ resource "helm_release" "coder_com" {
   ]
 
   set {
-    name  = "postrgresql.passwordSecret"
-    value = var.coder_pgsql_admin_password
+    name  = "postgres.useDefault"
+    value = false
+  }
+
+  set {
+    name  = "postgres.host"
+    value = var.coder_pgsql_host
+  }
+
+  set {
+    name  = "postgres.port"
+    value = "5432"
+  }
+
+  set {
+    name  = "postgres.database"
+    value = var.coder_pgsql_database
+  }
+
+  set {
+    name  = "postgres.user"
+    value = var.coder_pgsql_user
+  }
+
+  set {
+    name  = "postgres.passwordSecret"
+    value = var.coder_pgsql_user_password
+  }
+
+  set {
+    name  = "ingress.useDefault"
+    value = false
   }
 }

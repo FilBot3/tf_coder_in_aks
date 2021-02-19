@@ -1,12 +1,2 @@
 ---
-ingress:
-  useDefault: false
-  host: ""
-postgres:
-  useDefault: false
-  host: "coder-pgsql-server-01.postgres.database.azure.com"
-  port: "5432"
-  user: "dudleyp"
-  database: "coder"
-  sslMode: "require"
 ...
