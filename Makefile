@@ -43,6 +43,8 @@ aks-agic-destroy:
 graphviz:
 	terraform -chdir=tf-aks-agic graph | dot -Tsvg > graph.svg
 
+aspnetapp:
+	kubectl apply -f kube_manifests --namespace=coder-poc
 
 aks-agic-workspace:
 	terraform -chdir=tf-aks-agic workspace new poc
