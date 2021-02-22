@@ -209,7 +209,7 @@ resource "azurerm_postgresql_server" "coder" {
   administrator_login          = var.coder_pgsql_admin
   administrator_login_password = var.coder_pgsql_admin_password
   version                      = "11"
-  ssl_enforcement_enabled      = true
+  ssl_enforcement_enabled      = false # This will need to reviewed.
 }
 
 data "azurerm_postgresql_server" "coder" {

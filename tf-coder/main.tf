@@ -100,7 +100,7 @@ resource "helm_release" "coder_com" {
 
   set {
     name  = "postgres.user"
-    value = var.coder_pgsql_user
+    value = "${var.coder_pgsql_user}@${var.coder_pgsql_host}"
   }
 
   set {
