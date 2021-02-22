@@ -105,7 +105,7 @@ resource "helm_release" "coder_com" {
 
   set {
     name  = "postgres.passwordSecret"
-    value = var.coder_pgsql_user_password
+    value = "coder-pgsql-user-pass"
   }
 
   set {
