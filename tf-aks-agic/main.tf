@@ -218,7 +218,7 @@ data "azurerm_postgresql_server" "coder" {
 }
 
 resource "azurerm_postgresql_database" "coder" {
-  name                = "exampledb"
+  name                = "coder"
   resource_group_name = azurerm_resource_group.coder.name
   server_name         = azurerm_postgresql_server.coder.name
   charset             = "UTF8"
