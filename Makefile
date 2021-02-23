@@ -49,6 +49,9 @@ aspnetapp:
 aks-agic-workspace:
 	terraform -chdir=tf-aks-agic workspace new poc
 
+aks-nginx-workspace:
+	terraform -chdir=tf-aks-nginx workspace new poc
+
 coder-workspace:
 	terraform -chdir=tf-coder workspace new poc
 
