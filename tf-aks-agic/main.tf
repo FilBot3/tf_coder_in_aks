@@ -109,6 +109,13 @@ resource "azurerm_subnet" "coder_pods" {
   virtual_network_name = azurerm_virtual_network.coder_k8s.name
   address_prefixes     = ["10.240.0.0/16"]
 
+  enforce_private_link_endpoint_network_policies = true
+  enforce_private_link_service_network_policies  = true
+
+  service_endpoints = [
+    "Microsoft.Sql"
+  ]
+
   depends_on = [
     azurerm_virtual_network.coder_k8s
   ]
@@ -185,6 +192,63 @@ resource "azurerm_subnet_network_security_group_association" "coder_appgw" {
   # applied to.
   subnet_id                 = azurerm_subnet.coder_appgw.id
   network_security_group_id = azurerm_network_security_group.coder.id
+}
+
+resource "azurerm_postgresql_server" "coder" {
+  name                = "coder-pgsql-server-01"
+  location            = azurerm_resource_group.coder.location
+  resource_group_name = azurerm_resource_group.coder.name
+
+  sku_name = "GP_Gen5_4"
+
+  storage_mb                   = 5120
+  backup_retention_days        = 7
+  geo_redundant_backup_enabled = false
+  auto_grow_enabled            = true
+
+  administrator_login          = var.coder_pgsql_admin
+  administrator_login_password = var.coder_pgsql_admin_password
+  version                      = "11"
+  ssl_enforcement_enabled      = false # This will need to reviewed.
+}
+
+data "azurerm_postgresql_server" "coder" {
+  name                = azurerm_postgresql_server.coder.name
+  resource_group_name = azurerm_resource_group.coder.name
+}
+
+resource "azurerm_postgresql_database" "coder" {
+  name                = "coder"
+  resource_group_name = azurerm_resource_group.coder.name
+  server_name         = azurerm_postgresql_server.coder.name
+  charset             = "UTF8"
+  collation           = "English_United States.1252"
+}
+
+resource "azurerm_private_endpoint" "coder_pgsql" {
+  name                = "coder-poc-pgsql-endpoint"
+  location            = azurerm_resource_group.coder.location
+  resource_group_name = azurerm_resource_group.coder.name
+  subnet_id           = azurerm_subnet.coder_pods.id
+
+  private_service_connection {
+    name                           = "coder-poc-pgsql-endpoint-private-service-connection"
+    private_connection_resource_id = azurerm_postgresql_server.coder.id
+    subresource_names              = ["postgresqlServer"]
+    is_manual_connection           = false
+  }
+}
+
+resource "azurerm_postgresql_virtual_network_rule" "coder" {
+  name                                 = "coder-postgresql-vnet-rule"
+  resource_group_name                  = azurerm_resource_group.coder.name
+  server_name                          = azurerm_postgresql_server.coder.name
+  subnet_id                            = azurerm_subnet.coder_pods.id
+  ignore_missing_vnet_service_endpoint = false
+
+  depends_on = [
+    azurerm_private_endpoint.coder_pgsql
+  ]
 }
 
 resource "random_id" "coder_log_analytics_wksp" {
@@ -625,7 +689,8 @@ resource "null_resource" "wait_for_aks_appgw" {
   depends_on = [
     azurerm_application_gateway.coder,
     azurerm_kubernetes_cluster.coder,
-    local_file.kube_config
+    local_file.kube_config,
+    azurerm_postgresql_database.coder
   ]
 }
 data "azurerm_resource_group" "aks-nodes" {
@@ -782,6 +847,24 @@ resource "kubernetes_namespace" "coder" {
 
   depends_on = [
     null_resource.wait_for_roles
+  ]
+}
+
+resource "kubernetes_secret" "coder" {
+  metadata {
+    name      = "coder-pgsql-user-pass"
+    namespace = "coder-poc"
+  }
+
+  data = {
+    username = "${var.coder_pgsql_admin}@${data.azurerm_postgresql_server.coder.fqdn}"
+    password = var.coder_pgsql_admin_password
+  }
+
+  type = "kubernetes.io/basic-auth"
+
+  depends_on = [
+    kubernetes_namespace.coder
   ]
 }
 
