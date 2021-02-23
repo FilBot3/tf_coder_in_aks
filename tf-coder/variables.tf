@@ -38,3 +38,12 @@ variable "coder_pgsql_database" {
   default     = ""
   sensitive   = false
 }
+
+variable "coder_ingress_type" {
+  description = "Which type of Ingress is Coder Enterprise using?"
+  type        = string
+  default     = "nginx"
+  # This can have two values, either nginx or agic. Using nginx will use the
+  # default Ingress Controller that Coder expects. Using agic will tell Coder
+  # Enterprise we're using an Application Gateway Ingress Controller.
+}
