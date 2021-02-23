@@ -45,3 +45,9 @@ make aks-agic-create
 * [GitHub: Azure/aad-pod-identity](https://github.com/Azure/aad-pod-identity)
 * [GitHub:
   Azure/application-gateway-kubernetes-ingress](https://github.com/Azure/application-gateway-kubernetes-ingress)
+
+### Coder.com
+
+* [Coder Enterprise - Helm](https://github.com/cdr/enterprise-helm)
+* [Coder Enterprise - Images](https://github.com/cdr/enterprise-images)
+

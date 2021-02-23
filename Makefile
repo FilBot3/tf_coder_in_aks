@@ -43,4 +43,29 @@ aks-agic-destroy:
 graphviz:
 	terraform -chdir=tf-aks-agic graph | dot -Tsvg > graph.svg
 
+aspnetapp:
+	kubectl apply -f kube_manifests --namespace=coder-poc
+
+aks-agic-workspace:
+	terraform -chdir=tf-aks-agic workspace new poc
+
+coder-workspace:
+	terraform -chdir=tf-coder workspace new poc
+
+coder-create:
+	az account set --subscription=$(SUBSCRIPTION)
+	terraform fmt -recursive
+	terraform -chdir=tf-coder init
+	terraform -chdir=tf-coder validate
+	terraform -chdir=tf-coder plan -out=tf_plan.tfplan
+	terraform -chdir=tf-coder apply tf_plan.tfplan
+	bash scripts/login_to_poc.sh
+
+coder-destroy:
+	az account set --subscription=$(SUBSCRIPTION)
+	terraform -chdir=tf-coder fmt -recursive
+	terraform -chdir=tf-coder init
+	terraform -chdir=tf-coder validate
+	terraform -chdir=tf-coder plan -destroy -out=tf_plan.tfplan
+	terraform -chdir=tf-coder apply tf_plan.tfplan
 

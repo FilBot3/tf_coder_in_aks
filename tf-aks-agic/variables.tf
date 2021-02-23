@@ -14,6 +14,7 @@ variable "phil_pub_ip" {
   description = "Phillip Dudley (dudleyp) <Phillip.Dudley@company.com>"
   type        = string
   default     = ""
+  sensitive   = true
 }
 
 variable "aad_pod_identity_rbac_version" {
@@ -26,4 +27,17 @@ variable "kube_deploy" {
   description = "Use Terraform to deploy basic app?"
   type        = bool
   default     = false
+}
+
+variable "coder_pgsql_admin" {
+  description = "The PGSQL DB Admin user for Azure."
+  type        = string
+  default     = ""
+}
+
+variable "coder_pgsql_admin_password" {
+  description = "The PGSQL DB Admin Password for Azure."
+  type        = string
+  default     = ""
+  sensitive   = true
 }
