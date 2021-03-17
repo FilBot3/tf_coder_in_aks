@@ -78,14 +78,14 @@ data "azurerm_subscription" "current" {
 data "azuread_group" "aks_admin_group" {
   # This is the Azure Active Directory Group that will be allowed to manage the
   # AKS Clsuter.
-  display_name = "akscsuatclusteradmin"
+  display_name = var.aks_admin_group
 }
 
 resource "azurerm_resource_group" "coder" {
   # Azure Resource Manager Resource Group to house all of the Azure Resources
   # we create with Terraform.
-  name     = "Dudleyp-Coder-RG"
-  location = "centralus"
+  name     = var.coder_rg_name
+  location = var.coder_rg_location
 
   tags = merge(local.common_tags, var.company_tags)
 }

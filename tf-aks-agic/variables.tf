@@ -41,3 +41,25 @@ variable "coder_pgsql_admin_password" {
   default     = ""
   sensitive   = true
 }
+
+variable "aks_admin_group" {
+  description = "The Azure AD Group used to administer AKS"
+  type        = string
+  default     = "akscsuatclusteradmin"
+  sensitive   = false
+}
+
+variable "coder_rg_name" {
+  description = "The Azure Resource Group name to hold Coder."
+  type        = string
+  default     = "Dudleyp-Coder-RG"
+  sensitive   = false
+}
+
+variable "coder_rg_location" {
+  description = "The Azure Resource Group location to hold Coder."
+  type        = string
+  default     = "centralus"
+  sensitive   = false
+}
+
